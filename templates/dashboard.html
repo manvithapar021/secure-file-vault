@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Secure File Vault{% endblock %}
+{% block content %}
+<h2>Your files</h2>
+
+<div class="card mb-4"><div class="card-body">
+  <h5>Upload a file</h5>
+  <form method="post" action="{{ url_for('upload') }}" enctype="multipart/form-data" class="row g-2">
+    <div class="col-md-6"><input class="form-control" type="file" name="file" required></div>
+    <div class="col-md-3"><button class="btn btn-primary">Encrypt &amp; upload</button></div>
+    <div class="col-md-3 text-muted small">Max 16 MB. Allowed: txt, pdf, images, csv, xlsx, docx, pptx, zip. No executables.</div>
+  </form>
+</div></div>
+
+{% if files %}
+<table class="table table-striped">
+  <thead><tr><th>File</th><th>Size</th><th>Uploaded</th><th>Share links</th><th></th></tr></thead>
+  <tbody>
+  {% for f in files %}
+    <tr>
+      <td>{{ f.original_name }}</td>
+      <td>{{ f.size_bytes }} bytes</td>
+      <td>{{ f.uploaded_at }}</td>
+      <td>
+        {% for s in f.shares %}
+          <div class="small">
+            <code>/s/{{ s.token[:12] }}…</code>
+            — {{ s.download_count }}/{{ s.max_downloads or '∞' }} downloads,
+            {% if s.is_expired %}<span class="text-danger">expired</span>
+            {% elif s.is_exhausted %}<span class="text-danger">limit reached</span>
+            {% else %}<span class="text-success">active until {{ s.expires_at }}</span>{% endif %}
+            {% if s.share_password_hash %}<span class="badge bg-secondary">password-protected</span>{% endif %}
+          </div>
+        {% else %}
+          <span class="text-muted small">No links yet</span>
+        {% endfor %}
+        <form method="post" action="{{ url_for('create_share', file_id=f.id) }}" class="row g-1 mt-1">
+          <div class="col-auto"><input class="form-control form-control-sm" type="number" name="expiry_hours" value="24" min="1" max="720" title="Expiry in hours"></div>
+          <div class="col-auto"><input class="form-control form-control-sm" name="max_downloads" placeholder="Max downloads (blank = ∞)"></div>
+          <div class="col-auto"><input class="form-control form-control-sm" name="share_password" placeholder="Link password (optional)"></div>
+          <div class="col-auto"><button class="btn btn-sm btn-outline-primary">Create share link</button></div>
+        </form>
+      </td>
+      <td>
+        <form method="post" action="{{ url_for('delete_file', file_id=f.id) }}" onsubmit="return confirm('Delete this file and its share links?');">
+          <button class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted">No files yet — upload your first one above.</p>
+{% endif %}
+
+<h3 class="mt-5">Audit log</h3>
+<p class="text-muted small">Every upload, share, download and delete, newest first.</p>
+{% if logs %}
+<table class="table table-sm">
+  <thead><tr><th>When</th><th>Action</th><th>Detail</th></tr></thead>
+  <tbody>
+  {% for log in logs %}
+    <tr><td>{{ log.at }}</td><td>{{ log.action }}</td><td>{{ log.detail }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted">Nothing logged yet.</p>
+{% endif %}
+{% endblock %}

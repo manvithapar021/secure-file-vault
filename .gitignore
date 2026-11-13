@@ -1,0 +1,5 @@
+# Local secrets and runtime data — never commit these.
+instance/
+__pycache__/
+*.pyc
+.pytest_cache/

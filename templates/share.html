@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Shared file — Secure File Vault{% endblock %}
+{% block content %}
+{% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+  <p>This link has expired or reached its download limit. Ask the owner for a fresh link.</p>
+{% elif need_password %}
+  <h2>🔒 This link is password-protected</h2>
+  <p>Enter the share password the owner gave you.</p>
+  <form method="post" class="col-md-5">
+    <div class="mb-3"><input class="form-control" type="password" name="password" required placeholder="Share password"></div>
+    <button class="btn btn-primary">Unlock</button>
+  </form>
+{% else %}
+  <h2>📄 {{ link.file.original_name }}</h2>
+  <p>{{ link.file.size_bytes }} bytes · {{ link.download_count }}/{{ link.max_downloads or '∞' }} downloads used · expires {{ link.expires_at }}</p>
+  <a class="btn btn-primary btn-lg" href="{{ url_for('share_download', token=link.token) }}">Download</a>
+  <p class="text-muted mt-3 small">The file is decrypted only when you download it, and the download is logged for the owner.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Log in — Secure File Vault{% endblock %}
+{% block content %}
+<h2>Log in</h2>
+<form method="post" class="col-md-5">
+  <div class="mb-3"><label class="form-label">Username</label>
+    <input class="form-control" name="username" required></div>
+  <div class="mb-3"><label class="form-label">Password</label>
+    <input class="form-control" type="password" name="password" required></div>
+  <button class="btn btn-primary">Log in</button>
+</form>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3">
+  <h1>Share sensitive files — without leaving them lying around.</h1>
+  <p class="lead">Marksheets, IDs and offer letters get shared over WhatsApp and
+  email, where the file lives forever. Secure File Vault encrypts each
+  file with AES before it touches the disk, and every share link
+  expires, can be download-limited, and can carry its own password.
+  Every upload, share and download is logged.</p>
+  <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Create an account</a>
+  <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('login') }}">Log in</a>
+</div>
+<div class="row">
+  <div class="col-md-4"><h4>🔒 Encrypted at rest</h4><p>Files are AES-encrypted (Fernet) before being saved. The stored bytes are useless without the vault key.</p></div>
+  <div class="col-md-4"><h4>⏱️ Links that expire</h4><p>Every share link has an expiry time and an optional download limit and password.</p></div>
+  <div class="col-md-4"><h4>📋 Audited</h4><p>Uploads, shares, downloads and deletes are all written to an audit log you can see on your dashboard.</p></div>
+</div>
+{% endblock %}
